@@ -173,3 +173,30 @@ function f(foo: Record<string, any>): void {}
 // Merges latter 2 type parameters into 1
 function fizzbuzz([a]: SomeType<string>, { c }: Record<"c", void>): void;
 function fizzbuzz([a]: SomeType<string>, { c }: Record<"c", number>): void;
+
+// https://github.com/biomejs/biome/issues/10784
+// Overload signatures differing by arity should not offer an unsafe fix to make parameters optional.
+interface Issue10784A {
+    run(): void;
+    run(input: string): void;
+}
+
+type RunArgs = Parameters<Issue10784A["run"]>;
+const args = ["value"] as RunArgs;
+const requiredArgs: [string] = args;
+
+interface Issue10784B {
+    send(message: string): void;
+    send(message: string, priority: number): void;
+}
+
+interface Issue10784C {
+    calculate(value: number): number;
+    calculate(value: number): number;
+}
+
+interface Issue10784D {
+    update(id: number): void;
+    update(id: number, name?: string): void;
+}
+
