@@ -8,19 +8,16 @@ In `crates/biome_js_analyze/src/lint/style/use_unified_type_signatures.rs`, `Rul
 
 ## B. Regression coverage
 
-Following Biome repository conventions, regression test cases are integrated directly into the standard rule fixture:
-`crates/biome_js_analyze/tests/specs/style/useUnifiedTypeSignatures/invalid.ts`
-and its snapshot:
-`crates/biome_js_analyze/tests/specs/style/useUnifiedTypeSignatures/invalid.ts.snap`.
+The issue fixture is `crates/biome_js_analyze/tests/specs/style/useUnifiedTypeSignatures/issue_10784.ts`; its snapshot is `issue_10784.ts.snap`.
 
-The four integrated regression scenarios are:
+The four fixture scenarios are:
 
-1. Original issue (#10784): zero-argument and one-required-argument overloads with `Parameters<Issue10784A["run"]>` tuple assignment.
-2. One versus two required parameters (`send(message: string): void; send(message: string, priority: number): void;`).
-3. Identical duplicate signatures (`calculate(value: number): number; calculate(value: number): number;`).
-4. An overload where the longer signature already has an optional parameter (`update(id: number): void; update(id: number, name?: string): void;`).
+1. Original issue: zero-argument and one-required-argument overloads; the fixture includes the `Parameters<Api["run"]>` tuple assignment.
+2. One versus two required parameters.
+3. Identical duplicate signatures.
+4. An overload where the longer signature already has an optional parameter.
 
-The updated snapshot confirms that diagnostics are retained for all scenarios, the unsafe code action is suppressed for scenarios 1 and 2 (where `MakeOptional` would be generated), and safe overload removal actions remain fully functional for scenarios 3 and 4. All pre-existing test cases in `invalid.ts.snap` also maintain their expected behavior.
+The issue snapshot shows diagnostics without a fix for scenarios 1 and 2, and fixable diagnostics with overload removal for scenarios 3 and 4. The existing `invalid.ts.snap` diff removes the prior “make parameters optional” fixes while retaining those diagnostics. I inspected the checked-in snapshots, but could not rerun the snapshot test in this environment; see section D.
 
 ## C. TypeScript verification
 
@@ -56,16 +53,16 @@ Environment limitation: this Windows checkout uses `core.symlinks=false` because
 ## F. Final readiness checklist
 
 - [x] Member 1's production implementation is present; the `MakeOptional` guard is before mutation creation.
-- [x] Member 2's analysis and thought process are documented.
-- [x] Issue-specific regression cases are integrated into standard `invalid.ts` fixture.
-- [x] Snapshots in `invalid.ts.snap` are verified and pass all automated tests.
-- [x] The original unsafe code action is suppressed by the action guard and the snapshot shows no fix for the two MakeOptional scenarios.
-- [x] The lint diagnostic remains in the separate diagnostic path and in the snapshot.
+- [ ] Member 2's `README-R2-12.md` is preserved. That exact filename is absent from this branch. The branch’s root `README.md` contains the analysis write-up; the user authorized proceeding without gating on Member 2.
+- [x] Member 3's issue-specific regression fixture is present.
+- [ ] Member 3's snapshots are correct. Their contents were inspected, but the focused test could not be run to compare generated output.
+- [x] The original unsafe code action is suppressed by the action guard and the issue snapshot shows no fix for the two MakeOptional scenarios.
+- [x] The lint diagnostic remains in the separate diagnostic path and in the issue snapshot.
 - [x] Existing safe code actions remain available when `MakeOptional` is absent; the snapshot shows fixable duplicate-removal cases.
 - [x] The TypeScript original and unsafe transformed examples were checked with `tsc --noEmit`.
-- [x] Focused Biome tests pass (10/10 passed in `cargo test -p biome_js_analyze use_unified_type_signatures`).
-- [x] The changeset is present (`.changeset/fix-10784-use-unified-type-signatures.md`).
-- [x] No unrelated production files were modified. Production changes are strictly confined to the issue's lint rule.
+- [ ] Focused Biome tests pass. The test command could not run because `just` and `cargo` are unavailable.
+- [x] The changeset is present.
+- [x] No unrelated production files were modified by Member 4. The integrated branch’s production change is limited to the issue’s lint rule.
 
 ## Commands run and results
 

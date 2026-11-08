@@ -180,33 +180,6 @@ function f(foo: Record<string, any>): void {}
 function fizzbuzz([a]: SomeType<string>, { c }: Record<"c", void>): void;
 function fizzbuzz([a]: SomeType<string>, { c }: Record<"c", number>): void;
 
-// https://github.com/biomejs/biome/issues/10784
-// Overload signatures differing by arity should not offer an unsafe fix to make parameters optional.
-interface Issue10784A {
-    run(): void;
-    run(input: string): void;
-}
-
-type RunArgs = Parameters<Issue10784A["run"]>;
-const args = ["value"] as RunArgs;
-const requiredArgs: [string] = args;
-
-interface Issue10784B {
-    send(message: string): void;
-    send(message: string, priority: number): void;
-}
-
-interface Issue10784C {
-    calculate(value: number): number;
-    calculate(value: number): number;
-}
-
-interface Issue10784D {
-    update(id: number): void;
-    update(id: number, name?: string): void;
-}
-
-
 ```
 
 # Diagnostics
@@ -1021,88 +994,6 @@ invalid.ts:174:1 lint/style/useUnifiedTypeSignatures  FIXABLE  ━━━━━�
         173 │ + //·Merges·latter·2·type·parameters·into·1
         174 │ + function·fizzbuzz([a]:·SomeType<string>,·{·c·}:·Record<"c",·number>·|·Record<"c",·void>):·void;
     176 175 │   
-    177 176 │   // https://github.com/biomejs/biome/issues/10784
-  
-
-```
-
-```
-invalid.ts:180:5 lint/style/useUnifiedTypeSignatures ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  i This overload signature can be combined with a similar one.
-  
-    178 │ // Overload signatures differing by arity should not offer an unsafe fix to make parameters optional.
-    179 │ interface Issue10784A {
-  > 180 │     run(): void;
-        │     ^^^^^^^^^^^^
-    181 │     run(input: string): void;
-    182 │ }
-  
-  i Multiple similar overload signatures are hard to read and maintain.
-  
-
-```
-
-```
-invalid.ts:189:5 lint/style/useUnifiedTypeSignatures ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  i This overload signature can be combined with a similar one.
-  
-    188 │ interface Issue10784B {
-  > 189 │     send(message: string): void;
-        │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    190 │     send(message: string, priority: number): void;
-    191 │ }
-  
-  i Multiple similar overload signatures are hard to read and maintain.
-  
-
-```
-
-```
-invalid.ts:194:5 lint/style/useUnifiedTypeSignatures  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  i This overload signature can be combined with a similar one.
-  
-    193 │ interface Issue10784C {
-  > 194 │     calculate(value: number): number;
-        │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    195 │     calculate(value: number): number;
-    196 │ }
-  
-  i Multiple similar overload signatures are hard to read and maintain.
-  
-  i Unsafe fix: Remove the unnecessary overload signature.
-  
-    192 192 │   
-    193 193 │   interface Issue10784C {
-    194     │ - ····calculate(value:·number):·number;
-    195 194 │       calculate(value: number): number;
-    196 195 │   }
-  
-
-```
-
-```
-invalid.ts:199:5 lint/style/useUnifiedTypeSignatures  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  i This overload signature can be combined with a similar one.
-  
-    198 │ interface Issue10784D {
-  > 199 │     update(id: number): void;
-        │     ^^^^^^^^^^^^^^^^^^^^^^^^^
-    200 │     update(id: number, name?: string): void;
-    201 │ }
-  
-  i Multiple similar overload signatures are hard to read and maintain.
-  
-  i Unsafe fix: Remove the unnecessary overload signature.
-  
-    197 197 │   
-    198 198 │   interface Issue10784D {
-    199     │ - ····update(id:·number):·void;
-    200 199 │       update(id: number, name?: string): void;
-    201 200 │   }
   
 
 ```
